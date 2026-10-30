@@ -1,0 +1,21 @@
+.program i2s_tx
+.side_set 2
+
+; Side-set bit mapping with base pin = BCLK:
+;   side bit 0 -> BCLK
+;   side bit 1 -> LRCLK
+;
+; Sends one 32-bit left word (LRCLK=0), then one 32-bit right word (LRCLK=1).
+; Data is output MSB-first on the OUT pin.
+
+.wrap_target
+    set x, 31        side 0b00
+left_channel:
+    out pins, 1      side 0b00
+    jmp x-- left_channel side 0b01
+
+    set x, 31        side 0b10
+right_channel:
+    out pins, 1      side 0b10
+    jmp x-- right_channel side 0b11
+.wrap
