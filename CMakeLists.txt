@@ -39,14 +39,22 @@ if (NOT PICO_CYW43_SUPPORTED)
     message("Only building blink_any for non W boards as PICO_CYW43_SUPPORTED is not set")
 endif()
 
+file(GLOB HEAVY_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_LIST_DIR}/hv_generated/c/*.c"
+    "${CMAKE_CURRENT_LIST_DIR}/hv_generated/c/*.cpp"
+)
+
 add_executable(blink_any
     blink_any.c
+    ${HEAVY_SOURCES}
     )
 
 pico_generate_pio_header(blink_any ${CMAKE_CURRENT_LIST_DIR}/i2s_tx.pio)
 
 # pull in common dependencies
 target_link_libraries(blink_any pico_stdlib hardware_pio hardware_clocks m)
+target_include_directories(blink_any PRIVATE ${CMAKE_CURRENT_LIST_DIR}/hv_generated/c)
+target_compile_definitions(blink_any PRIVATE HV_BARE_METAL=1 HV_SIMD_NONE=1)
 
 if (PICO_CYW43_SUPPORTED)
     target_link_libraries(blink_any pico_cyw43_arch_none)

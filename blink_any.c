@@ -8,6 +8,7 @@
 #include "hardware/clocks.h"
 #include "hardware/pio.h"
 #include "i2s_tx.pio.h"
+#include "Heavy_testpatch.h"
 #include <math.h>
 #include <stdint.h>
 
@@ -16,35 +17,51 @@
 #define I2S_LRCLK_PIN 19
 
 #define SAMPLE_RATE_HZ 44100.0f
-#define SINE_FREQUENCY_HZ 220.0f
-#define SINE_TABLE_SIZE 256
-#define AMPLITUDE 0.50f
+#define OUTPUT_GAIN 0.25f
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846f
-#endif
+typedef struct audio_engine audio_engine_t;
 
-static int16_t sine_table[SINE_TABLE_SIZE];
-
-static void init_sine_table(void) {
-    for (int i = 0; i < SINE_TABLE_SIZE; ++i) {
-        float phase = (2.0f * M_PI * (float) i) / (float) SINE_TABLE_SIZE;
-        float s = sinf(phase) * AMPLITUDE;
-        sine_table[i] = (int16_t) (s * 32760.0f);
-    }
-}
+struct audio_engine {
+    HeavyContextInterface *heavy;
+    void (*process)(audio_engine_t *self, PIO pio, uint sm);
+};
 
 static inline uint32_t sample_to_i2s_word(int16_t sample) {
     // 16-bit sample in upper bits of 32-bit channel word, MSB first.
     return ((uint32_t) (uint16_t) sample) << 16;
 }
 
+static inline int16_t float_to_i16(float sample) {
+    if (sample > 1.0f) sample = 1.0f;
+    if (sample < -1.0f) sample = -1.0f;
+    return (int16_t) lroundf(sample * 32767.0f);
+}
+
+static void audio_process(audio_engine_t *self, PIO pio, uint sm) {
+    float output[2] = {0.0f, 0.0f};
+    float left = 0.0f;
+    float right = 0.0f;
+
+    if (self->heavy != NULL) {
+        int num_output_channels = hv_getNumOutputChannels(self->heavy);
+        if (num_output_channels > 0) {
+            hv_processInline(self->heavy, NULL, output, 1);
+            left = output[0] * OUTPUT_GAIN;
+            right = (num_output_channels > 1) ? output[1] * OUTPUT_GAIN : output[0] * OUTPUT_GAIN;
+        }
+    }
+
+    int16_t left_i16 = float_to_i16(left);
+    int16_t right_i16 = float_to_i16(right);
+
+    pio_sm_put_blocking(pio, sm, sample_to_i2s_word(left_i16));
+    pio_sm_put_blocking(pio, sm, sample_to_i2s_word(right_i16));
+}
+
 int main() {
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
     gpio_put(PICO_DEFAULT_LED_PIN, 1);
-
-    init_sine_table();
 
     PIO pio = pio0;
     uint sm = 0;
@@ -72,21 +89,17 @@ int main() {
     pio_sm_init(pio, sm, offset, &c);
     pio_sm_set_enabled(pio, sm, true);
 
-    float phase = 0.0f;
-    const float phase_inc = (SINE_FREQUENCY_HZ * (float) SINE_TABLE_SIZE) / SAMPLE_RATE_HZ;
+    HeavyContextInterface *heavy = hv_testpatch_new(SAMPLE_RATE_HZ);
+    if (heavy == NULL) {
+        panic("heavy context creation failed");
+    }
+
+    audio_engine_t audio = {
+        .heavy = heavy,
+        .process = audio_process,
+    };
 
     while (true) {
-        uint32_t index = (uint32_t) phase & (SINE_TABLE_SIZE - 1);
-        int16_t sample = sine_table[index];
-        uint32_t word = sample_to_i2s_word(sample);
-
-        // Stereo: write left then right channel.
-        pio_sm_put_blocking(pio, sm, word);
-        pio_sm_put_blocking(pio, sm, word);
-
-        phase += phase_inc;
-        if (phase >= (float) SINE_TABLE_SIZE) {
-            phase -= (float) SINE_TABLE_SIZE;
-        }
+        audio.process(&audio, pio, sm);
     }
 }
