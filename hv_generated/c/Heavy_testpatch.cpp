@@ -83,7 +83,8 @@ extern "C" {
 
 Heavy_testpatch::Heavy_testpatch(double sampleRate, int poolKb, int inQueueKb, int outQueueKb)
     : HeavyContext(sampleRate, poolKb, inQueueKb, outQueueKb) {
-  numBytes += sPhasor_k_init(&sPhasor_CQpX5ml3, 220.0f, sampleRate);
+  numBytes += sPhasor_k_init(&sPhasor_x29LXvFC, 10.0f, sampleRate);
+  numBytes += sPhasor_init(&sPhasor_5AWkqL1V, sampleRate);
   
 }
 
@@ -180,23 +181,26 @@ int Heavy_testpatch::process(float **inputBuffers, float **outputBuffers, int n)
     __hv_zero_f(VOf(O1));
 
     // process all signal functions
-    __hv_phasor_k_f(&sPhasor_CQpX5ml3, VOf(Bf0));
-    __hv_var_k_f(VOf(Bf1), 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
-    __hv_sub_f(VIf(Bf0), VIf(Bf1), VOf(Bf1));
-    __hv_abs_f(VIf(Bf1), VOf(Bf1));
-    __hv_var_k_f(VOf(Bf0), 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f);
-    __hv_sub_f(VIf(Bf1), VIf(Bf0), VOf(Bf0));
-    __hv_var_k_f(VOf(Bf1), 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f);
+    __hv_phasor_k_f(&sPhasor_x29LXvFC, VOf(Bf0));
+    __hv_var_k_f(VOf(Bf1), 2000.0f, 2000.0f, 2000.0f, 2000.0f, 2000.0f, 2000.0f, 2000.0f, 2000.0f);
     __hv_mul_f(VIf(Bf0), VIf(Bf1), VOf(Bf1));
-    __hv_mul_f(VIf(Bf1), VIf(Bf1), VOf(Bf0));
-    __hv_mul_f(VIf(Bf1), VIf(Bf0), VOf(Bf2));
-    __hv_mul_f(VIf(Bf2), VIf(Bf0), VOf(Bf0));
+    __hv_phasor_f(&sPhasor_5AWkqL1V, VIf(Bf1), VOf(Bf1));
+    __hv_var_k_f(VOf(Bf0), 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+    __hv_sub_f(VIf(Bf1), VIf(Bf0), VOf(Bf0));
+    __hv_abs_f(VIf(Bf0), VOf(Bf0));
+    __hv_var_k_f(VOf(Bf1), 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f, 0.25f);
+    __hv_sub_f(VIf(Bf0), VIf(Bf1), VOf(Bf1));
+    __hv_var_k_f(VOf(Bf0), 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f, 6.283185307179586f);
+    __hv_mul_f(VIf(Bf1), VIf(Bf0), VOf(Bf0));
+    __hv_mul_f(VIf(Bf0), VIf(Bf0), VOf(Bf1));
+    __hv_mul_f(VIf(Bf0), VIf(Bf1), VOf(Bf2));
+    __hv_mul_f(VIf(Bf2), VIf(Bf1), VOf(Bf1));
     __hv_var_k_f(VOf(Bf3), 0.007833333333333f, 0.007833333333333f, 0.007833333333333f, 0.007833333333333f, 0.007833333333333f, 0.007833333333333f, 0.007833333333333f, 0.007833333333333f);
     __hv_var_k_f(VOf(Bf4), -0.166666666666667f, -0.166666666666667f, -0.166666666666667f, -0.166666666666667f, -0.166666666666667f, -0.166666666666667f, -0.166666666666667f, -0.166666666666667f);
-    __hv_fma_f(VIf(Bf2), VIf(Bf4), VIf(Bf1), VOf(Bf1));
-    __hv_fma_f(VIf(Bf0), VIf(Bf3), VIf(Bf1), VOf(Bf1));
-    __hv_add_f(VIf(Bf1), VIf(O0), VOf(O0));
-    __hv_add_f(VIf(Bf1), VIf(O1), VOf(O1));
+    __hv_fma_f(VIf(Bf2), VIf(Bf4), VIf(Bf0), VOf(Bf0));
+    __hv_fma_f(VIf(Bf1), VIf(Bf3), VIf(Bf0), VOf(Bf0));
+    __hv_add_f(VIf(Bf0), VIf(O1), VOf(O1));
+    __hv_add_f(VIf(Bf0), VIf(O0), VOf(O0));
 
     // save output vars to output buffer
     __hv_store_f(outputBuffers[0]+n, VIf(O0));
