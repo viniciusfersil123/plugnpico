@@ -35,9 +35,18 @@
 
 // object includes
 #include "HeavyContext.hpp"
+#include "HvTable.h"
+#include "HvControlBinop.h"
+#include "HvControlCast.h"
 #include "HvSignalPhasor.h"
+#include "HvSignalTabwrite.h"
+#include "HvControlTabhead.h"
+#include "HvSignalTabread.h"
+#include "HvControlDelay.h"
 #include "HvMath.h"
+#include "HvControlSystem.h"
 #include "HvSignalVar.h"
+#include "HvControlVar.h"
 
 class Heavy_testpatch : public HeavyContext {
 
@@ -71,10 +80,63 @@ class Heavy_testpatch : public HeavyContext {
 
 
   // static sendMessage functions
+  static void cMsg_zahtgrHC_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cSystem_92aky9CY_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cDelay_4t01VNVe_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cDelay_qOTuUuZ6_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cSwitchcase_seemoZlL_onMessage(HeavyContextInterface *, void *, int letIn, const HvMessage *const, void *);
+  static void cBinop_FWdO3snQ_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void hTable_6sejzFQI_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_onhlmcxE_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_cLkgmIpr_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_4pCGmCxt_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cCast_gi1yIg2r_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_msqv8ink_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_ZADKKaQZ_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cTabhead_oo5J7kc0_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_8MxcFzuY_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cSystem_kUkt6uEX_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cVar_kemEFDN1_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cDelay_YXVrRohJ_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cDelay_G2xncgpq_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void sTabread_F0OgZQE8_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_83ksa2ps_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_4luctala_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_03tPqQaB_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cSystem_l6lyATCC_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_gsurPF7S_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_FbsaRCNP_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cMsg_oUrBYhpR_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_0Ocbz6Fl_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cCast_mCCeLx6z_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_0Bzv7VGP_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cBinop_mqfQj0F9_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cCast_ODREhRwl_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cVar_kd7Kk1et_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cReceive_qoZNQUJn_sendMessage(HeavyContextInterface *, int, const HvMessage *);
+  static void cReceive_vF6v8DEB_sendMessage(HeavyContextInterface *, int, const HvMessage *);
 
   // objects
-  SignalPhasor sPhasor_x29LXvFC;
-  SignalPhasor sPhasor_5AWkqL1V;
+  SignalPhasor sPhasor_BPjOeW9f;
+  SignalTabread sTabread_F0OgZQE8;
+  SignalTabwrite sTabwrite_OfvVBz5v;
+  SignalVarf sVarf_pqNrwnTq;
+  ControlDelay cDelay_4t01VNVe;
+  ControlDelay cDelay_qOTuUuZ6;
+  ControlBinop cBinop_FWdO3snQ;
+  HvTable hTable_6sejzFQI;
+  ControlBinop cBinop_cLkgmIpr;
+  ControlTabhead cTabhead_oo5J7kc0;
+  ControlVar cVar_kemEFDN1;
+  ControlDelay cDelay_YXVrRohJ;
+  ControlDelay cDelay_G2xncgpq;
+  ControlBinop cBinop_83ksa2ps;
+  ControlBinop cBinop_4luctala;
+  ControlBinop cBinop_03tPqQaB;
+  ControlBinop cBinop_0Ocbz6Fl;
+  ControlBinop cBinop_0Bzv7VGP;
+  ControlBinop cBinop_mqfQj0F9;
+  ControlVar cVar_kd7Kk1et;
 };
 
 #endif // _HEAVY_CONTEXT_TESTPATCH_HPP_

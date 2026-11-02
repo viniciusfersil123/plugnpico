@@ -9,7 +9,9 @@ typedef struct audio_engine audio_engine_t;
 
 struct audio_engine {
     HeavyContextInterface *heavy;
+    hv_uint32_t receptor_hash;
     void (*process)(audio_engine_t *self, PIO pio, uint sm);
+    void (*set_receptor)(audio_engine_t *self, float value);
 };
 
 static inline uint32_t sample_to_i2s_word(int16_t sample) {
@@ -36,6 +38,14 @@ static void audio_process(audio_engine_t *self, PIO pio, uint sm) {
     audio_render(pio, sm, left, right);
 }
 
+static void audio_set_receptor(audio_engine_t *self, float value) {
+    if (self == NULL || self->heavy == NULL) {
+        return;
+    }
+
+    hv_sendFloatToReceiver(self->heavy, self->receptor_hash, value);
+}
+
 static inline audio_engine_t audio_engine_create(PIO pio, uint sm) {
     audio_init(pio, sm);
 
@@ -46,7 +56,9 @@ static inline audio_engine_t audio_engine_create(PIO pio, uint sm) {
 
     audio_engine_t audio = {
         .heavy = heavy,
+        .receptor_hash = hv_stringToHash("receptor"),
         .process = audio_process,
+        .set_receptor = audio_set_receptor,
     };
 
     return audio;

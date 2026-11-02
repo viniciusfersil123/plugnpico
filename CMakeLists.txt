@@ -52,7 +52,7 @@ add_executable(blink_any
 pico_generate_pio_header(blink_any ${CMAKE_CURRENT_LIST_DIR}/i2s_tx.pio)
 
 # pull in common dependencies
-target_link_libraries(blink_any pico_stdlib hardware_pio hardware_clocks m)
+target_link_libraries(blink_any pico_stdlib hardware_pio hardware_clocks hardware_adc m)
 target_include_directories(blink_any PRIVATE ${CMAKE_CURRENT_LIST_DIR}/hv_generated/c)
 target_compile_definitions(blink_any PRIVATE HV_BARE_METAL=1 HV_SIMD_NONE=1)
 
