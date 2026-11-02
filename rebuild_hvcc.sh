@@ -3,6 +3,9 @@ set -eu
 
 cd "$(dirname "$0")"
 
+# Generate runtime component configuration from components.json.
+python3 ./generate_components.py
+
 # Always regenerate the Heavy output from a clean state.
 rm -rf hv_generated
 hvcc test.pd -o hv_generated -n testpatch -g c
@@ -15,3 +18,4 @@ cmake --build build -- -j4
 ${HOME}/.pico-sdk/picotool/2.3.1/picotool/picotool load build/blink_any.elf -fx
 
 echo "Heavy + Pico rebuild and flash complete."
+

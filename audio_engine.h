@@ -2,6 +2,7 @@
 #define AUDIO_ENGINE_H
 
 #include "audio_config.h"
+#include "components_runtime.h"
 #include <math.h>
 #include <stdint.h>
 
@@ -56,7 +57,7 @@ static inline audio_engine_t audio_engine_create(PIO pio, uint sm) {
 
     audio_engine_t audio = {
         .heavy = heavy,
-        .receptor_hash = hv_stringToHash("receptor"),
+        .receptor_hash = hv_stringToHash(ANALOG_CONTROL_PRIMARY_RECEIVER),
         .process = audio_process,
         .set_receptor = audio_set_receptor,
     };

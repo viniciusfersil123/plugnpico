@@ -1,0 +1,8 @@
+{
+  "components": {
+    "adc1": {
+      "component": "AnalogControl",
+      "pin": 27
+    }
+  }
+}
